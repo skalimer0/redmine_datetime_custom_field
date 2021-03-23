@@ -65,8 +65,12 @@ class Query
       if is_custom_filter && self.class.connection.adapter_name.downcase.to_sym == :postgresql && !Rails.env.test?
         s << ("to_timestamp(#{table}.#{field},'DD/MM/YYYY HH24:MI') > to_timestamp('%s','DD/MM/YYYY HH24:MI')" % [quoted_time(from, is_custom_filter)])
       else
-        if Rails.env.test? || table.classify.constantize.columns_hash[field].type == :date || table.classify.constantize.columns_hash[field].type == :datetime
-          s << ("#{table}.#{field} > '%s'" % [quoted_time(from, is_custom_filter)])
+        unless table.classify.constantize.columns_hash[field].nil?
+          if Rails.env.test? || table.classify.constantize.columns_hash[field].type == :date || table.classify.constantize.columns_hash[field].type == :datetime
+            s << ("#{table}.#{field} > '%s'" % [quoted_time(from, is_custom_filter)])
+          else
+            s << ("STR_TO_DATE(#{table}.#{field},'%d/%m/%Y') > STR_TO_DATE('" + quoted_time(from, is_custom_filter) + "','%d/%m/%Y')")
+          end
         else
           s << ("STR_TO_DATE(#{table}.#{field},'%d/%m/%Y') > STR_TO_DATE('" + quoted_time(from, is_custom_filter) + "','%d/%m/%Y')")
         end
@@ -86,8 +90,12 @@ class Query
       if is_custom_filter && self.class.connection.adapter_name.downcase.to_sym == :postgresql && !Rails.env.test?
         s << ("to_timestamp(#{table}.#{field},'DD/MM/YYYY HH24:MI') <= to_timestamp('%s','DD/MM/YYYY HH24:MI')" % [quoted_time(to, is_custom_filter)])
       else
-        if Rails.env.test? || table.classify.constantize.columns_hash[field].type == :date || table.classify.constantize.columns_hash[field].type == :datetime
-          s << ("#{table}.#{field} <= '%s'" % [quoted_time(to, is_custom_filter)])
+        unless table.classify.constantize.columns_hash[field].nil?
+          if Rails.env.test? || table.classify.constantize.columns_hash[field].type == :date || table.classify.constantize.columns_hash[field].type == :datetime
+            s << ("#{table}.#{field} <= '%s'" % [quoted_time(to, is_custom_filter)])
+          else
+            s << ("STR_TO_DATE(#{table}.#{field},'%d/%m/%Y') <= STR_TO_DATE('" + quoted_time(to, is_custom_filter) + "','%d/%m/%Y')")
+          end
         else
           s << ("STR_TO_DATE(#{table}.#{field},'%d/%m/%Y') <= STR_TO_DATE('" + quoted_time(to, is_custom_filter) + "','%d/%m/%Y')")
         end
