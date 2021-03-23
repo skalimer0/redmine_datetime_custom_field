@@ -72,7 +72,7 @@ class Query
             s << ("STR_TO_DATE(#{table}.#{field},'%d/%m/%Y') > STR_TO_DATE('" + quoted_time(from, is_custom_filter) + "','%d/%m/%Y')")
           end
         else
-          s << ("STR_TO_DATE(#{table}.#{field},'%d/%m/%Y') > STR_TO_DATE('" + quoted_time(from, is_custom_filter) + "','%d/%m/%Y')")
+          s << ("#{table}.#{field} > '%s'" % [quoted_time(from, is_custom_filter)])
         end
       end
       ### Patch End
@@ -97,7 +97,7 @@ class Query
             s << ("STR_TO_DATE(#{table}.#{field},'%d/%m/%Y') <= STR_TO_DATE('" + quoted_time(to, is_custom_filter) + "','%d/%m/%Y')")
           end
         else
-          s << ("STR_TO_DATE(#{table}.#{field},'%d/%m/%Y') <= STR_TO_DATE('" + quoted_time(to, is_custom_filter) + "','%d/%m/%Y')")
+          s << ("#{table}.#{field} > '%s'" % [quoted_time(from, is_custom_filter)])
         end
       end
       ### Patch End
